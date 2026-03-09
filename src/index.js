@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // In-memory storage
 const bookings = new Map();
@@ -42,18 +43,7 @@ const SERVICE_FEES = {
 
 // === HEALTH CHECK ===
 app.get('/', (req, res) => {
-  res.json({
-    name: 'Automated Booking & Reservation Bot',
-    version: '1.0.0',
-    services: ['Flights', 'Hotels', 'Restaurants'],
-    endpoints: {
-      flights: '/api/flights',
-      hotels: '/api/hotels',
-      restaurants: '/api/restaurants',
-      bookings: '/api/bookings',
-      payment: '/api/payment'
-    }
-  });
+  res.sendFile('index.html', { root: 'public' });
 });
 
 app.get('/health', (req, res) => {

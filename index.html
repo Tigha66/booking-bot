@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Bot - Flights, Hotels, Restaurants</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .features {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .booking-form {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--gray);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .pricing {
+            background: var(--dark);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .pricing-grid {
+            max-width: 900px;
+            margin: 40px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .price-card {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+        }
+        
+        .price-card.featured {
+            background: var(--primary);
+        }
+        
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .price-card ul {
+            list-style: none;
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .price-card li {
+            padding: 8px 0;
+            opacity: 0.9;
+        }
+        
+        .price-card li::before {
+            content: "✓";
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+        
+        footer {
+            background: #111827;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>✈️ Book Flights, Hotels & Restaurants</h1>
+        <p>Your AI-powered travel assistant. Book flights, reserve hotels, and make restaurant reservations - all in one place.</p>
+        <a href="#book" class="cta-button">Start Booking</a>
+    </section>
+    
+    <section class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🛫</div>
+            <h3>Flight Booking</h3>
+            <p>Search and book flights from hundreds of airlines. Compare prices, filter by stops, and find the best deals.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏨</div>
+            <h3>Hotel Reservations</h3>
+            <p>Find perfect hotels based on location, amenities, and budget. Read reviews and book with confidence.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🍽️</div>
+            <h3>Restaurant Bookings</h3>
+            <p>Reserve tables at top restaurants. Filter by cuisine, location, and availability.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Instant Notifications</h3>
+            <p>Receive confirmations via email, SMS, WhatsApp, or Telegram. Never miss a booking.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3>Secure Payments</h3>
+            <p>Pay securely with Stripe. Service fees as low as $2.99 per booking or subscribe for $29.99/mo.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Manage Bookings</h3>
+            <p>View, modify, or cancel bookings anytime. Full booking history at your fingertips.</p>
+        </div>
+    </section>
+    
+    <section id="book" class="booking-form">
+        <div class="form-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('flights')">✈️ Flights</button>
+                <button class="tab" onclick="switchTab('hotels')">🏨 Hotels</button>
+                <button class="tab" onclick="switchTab('restaurants')">🍽️ Restaurants</button>
+            </div>
+            
+            <form id="bookingForm">
+                <!-- Flights Form -->
+                <div id="flights-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From</label>
+                            <input type="text" placeholder="City or airport">
+                        </div>
+                        <div class="form-group">
+                            <label>To</label>
+                            <input type="text" placeholder="City or airport">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departure Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>Passengers</label>
+                            <input type="number" min="1" value="1">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hotels Form -->
+                <div id="hotels-form" style="display:none;">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" placeholder="City or hotel name">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check-in</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>Check-out</label>
+                            <input type="date">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Guests</label>
+                            <input type="number" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Room Type</label>
+                            <select>
+                                <option>Any</option>
+                                <option>Standard</option>
+                                <option>Deluxe</option>
+                                <option>Suite</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Restaurants Form -->
+                <div id="restaurants-form" style="display:none;">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" placeholder="City or area">
+                    </div>
+                    <div class="form-group">
+                        <label>Cuisine</label>
+                        <select>
+                            <option>Any</option>
+                            <option>Italian</option>
+                            <option>Japanese</option>
+                            <option>American</option>
+                            <option>Indian</option>
+                            <option>Chinese</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <select>
+                                <option>12:00 PM</option>
+                                <option>12:30 PM</option>
+                                <option>1:00 PM</option>
+                                <option>6:00 PM</option>
+                                <option>6:30 PM</option>
+                                <option>7:00 PM</option>
+                                <option>7:30 PM</option>
+                                <option>8:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Party Size</label>
+                        <input type="number" min="1" value="2">
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Search & Book</button>
+            </form>
+        </div>
+    </section>
+    
+    <section class="pricing">
+        <h2>Simple Pricing</h2>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Pay Per Booking</h3>
+                <div class="price">$2.99<span>/booking</span></div>
+                <ul>
+                    <li>Flight bookings</li>
+                    <li>Hotel reservations</li>
+                    <li>Restaurant bookings</li>
+                    <li>Email confirmations</li>
+                    <li>24/7 support</li>
+                </ul>
+            </div>
+            <div class="price-card featured">
+                <h3>Pro</h3>
+                <div class="price">$29.99<span>/month</span></div>
+                <ul>
+                    <li>10 free bookings</li>
+                    <li>All features included</li>
+                    <li>Priority support</li>
+                    <li>WhatsApp notifications</li>
+                    <li>Cancel anytime</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>© 2026 Booking Bot. All rights reserved.</p>
+        <p>Powered by OpenClaw AI</p>
+    </footer>
+    
+    <script>
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide forms
+            document.getElementById('flights-form').style.display = tab === 'flights' ? 'block' : 'none';
+            document.getElementById('hotels-form').style.display = tab === 'hotels' ? 'block' : 'none';
+            document.getElementById('restaurants-form').style.display = tab === 'restaurants' ? 'block' : 'none';
+        }
+        
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Search functionality ready! Connect to the booking bot API to enable live searches.');
+        });
+    </script>
+</body>
+</html>
